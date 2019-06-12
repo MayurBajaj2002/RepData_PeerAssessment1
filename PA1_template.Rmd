@@ -1,25 +1,117 @@
 ---
-title: "Reproducible Research: Peer Assessment 1"
-output: 
+title: "Reproducible Research"
+output:
   html_document:
-    keep_md: true
+    df_print: paged
 ---
+## Data Wrangling:
+```{r}
+windowsFont("Lucida Console")
+```
 
+### Session Information
+```{r Session Info}
+sessionInfo()
+```
 
-## Loading and preprocessing the data
+### Loading Essential Packages
+```{r Loading Packages}
+library(dplyr)
+library(ggplot2)
+```
 
+### The Dataset
+```{r Loading the dataset}
+activity = read.csv("activity.csv")
+```
+Here are the summary statistics of the dataset
+```{r General Chracteristics, warning FALSE}
+summary(activity)
+```
 
+## Exploratory Data Analysis
+### Numerical Summaries
+```{r Grouping, warning = FALSE}
+## Mean and Median number of steps taken each day by grouping daywise
+steps_details <- activity %>%
+  group_by(date) %>%
+  summarise(steps_per_day = sum(steps, na.rm = FALSE), median_per_day = median(steps),
+            mean_per_day = mean(steps))
+head(steps_details)
+```
 
-## What is mean total number of steps taken per day?
+### Plots
+```{r Histogram,warning=FALSE}
+## Plotting a Histogram
+ggplot(mapping = aes(x = steps_details$steps_per_day))+
+  geom_histogram()+ 
+  ggtitle("Histogram of total steps per day")+
+  xlab("Total Steps per Day") 
+  
+```
 
+```{r Time Series Plot, warning=FALSE}
+## Average steps during each time interval
+# Grouping the variables on the basis of the interval
+interval_details <- activity %>%
+  group_by(interval) %>%
+  summarise(mean_steps = mean(steps, na.rm = TRUE))
 
+# Time series plot
+ggplot(interval_details, mapping = aes(x=interval, y=mean_steps))+
+  geom_line()+
+  ggtitle("Time Series Plot of Steps Averaged over all days")+
+  ylab("Steps Averaged over all days")
+```
 
-## What is the average daily activity pattern?
+Calculating the interval during which mean number of steps is the highest: 
+```{r MaxInterval, warning = FALSE}
+interval_details$interval[which.max(interval_details$mean_steps)]
+```
 
+## Data Cleaning 
 
+We first get a count of the missing values:
+```{r NA counts, warning = FALSE}
+lapply(activity, function(x) sum(is.na(x)))
+```
 
-## Imputing missing values
+### Imputing the missing Values:
+Only 'steps' has missing values. Hence, replace them by the mean and store the analytic data in a new dataset - 'activity_ana'
 
+```{r Imputing Missing Values}
+activity_ana <- activity
+activity_ana$steps[is.na(activity_ana$steps)] <- 
+  mean(activity_ana$steps, na.rm = TRUE)
+```
 
+### Plots
+```{r Histogram without NA, warning=FALSE}
+## Mean and Median number of steps taken each day by grouping daywise
+activity_ana%>%
+  group_by(date) %>%
+  summarise(steps_per_day = sum(steps)) %>%
+  
+  ggplot(steps_per_day, mapping = aes(x = steps_details$steps_per_day))+
+  geom_histogram(binwidth = 1000)+
+  ggtitle("Histogram of total steps per day")+
+  xlab("Total Steps per Day") 
+```
 
 ## Are there differences in activity patterns between weekdays and weekends?
+```{r Factor Variables, warning = FALSE}
+# Creating the factor variable 'day_type'
+weekdays1 <- c('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday')
+activity_ana$day_type <- 
+  factor((weekdays(as.Date(activity_ana$date)) %in% weekdays1), 
+         levels=c(FALSE, TRUE), labels=c('weekend', 'weekday'))
+
+# Boxplot to compare the steps during weekdays and weekends
+ggplot(activity_ana, mapping = aes(x = day_type, y = log10(steps)))+
+    geom_boxplot() +
+    theme(axis.title.x = element_blank())
+```
+
+**Narrative:**
+- The number of steps is less variable during weekends
+- The median number of steps is slightly more during weekends
