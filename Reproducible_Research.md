@@ -238,4 +238,3 @@ ggplot(activity_ana, mapping = aes(x = day_type, y = log10(steps)))+
 **Narrative:**
 - The number of steps is less variable during weekends
 - The median number of steps is slightly more during weekends
-
