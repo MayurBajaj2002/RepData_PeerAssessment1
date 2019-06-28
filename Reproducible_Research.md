@@ -144,7 +144,7 @@ ggplot(mapping = aes(x = steps_details$steps_per_day))+
 ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 ```
 
-![](Reproducible_Research_files/figure-html/Histogram-1.png)<!-- -->
+![](Reproducible_Research_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
 
 
 ```r
@@ -161,7 +161,7 @@ ggplot(interval_details, mapping = aes(x=interval, y=mean_steps))+
   ylab("Steps Averaged over all days")
 ```
 
-![](Reproducible_Research_files/figure-html/Time Series Plot-1.png)<!-- -->
+![](Reproducible_Research_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
 
 Calculating the interval during which mean number of steps is the highest: 
 
@@ -216,7 +216,7 @@ activity_ana%>%
   xlab("Total Steps per Day") 
 ```
 
-![](Reproducible_Research_files/figure-html/Histogram without NA-1.png)<!-- -->
+![](Reproducible_Research_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
@@ -233,7 +233,7 @@ ggplot(activity_ana, mapping = aes(x = day_type, y = log10(steps)))+
     theme(axis.title.x = element_blank())
 ```
 
-![](Reproducible_Research_files/figure-html/Factor Variables-1.png)<!-- -->
+![](Reproducible_Research_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
 **Narrative:**
 - The number of steps is less variable during weekends
